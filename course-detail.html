@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Detail - Miha Institute</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(-45deg, #6b5b9a, #00d1ff, #8b7bb8, #00a8cc);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
+            min-height: 100vh;
+            color: white;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            color: #00d1ff;
+            font-size: 1.8rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: #00d1ff;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .course-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+        }
+
+        .course-main {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .course-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Course Header */
+        .course-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+        }
+
+        .course-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .course-category {
+            background: rgba(0, 209, 255, 0.2);
+            color: #00d1ff;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-weight: 500;
+        }
+
+        .course-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: #ffd700;
+        }
+
+        .course-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .course-instructor {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .course-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Video Player */
+        .video-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .video-player {
+            width: 100%;
+            height: 400px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .video-placeholder {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .play-button-large {
+            background: rgba(0, 209, 255, 0.2);
+            border: 3px solid #00d1ff;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #00d1ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .play-button-large:hover {
+            background: rgba(0, 209, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .video-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .video-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .video-info p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Course Content */
+        .course-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: #00d1ff;
+        }
+
+        .lesson-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .lesson-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .lesson-number {
+            background: rgba(0, 209, 255, 0.2);
+            color: #00d1ff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .lesson-info {
+            flex: 1;
+        }
+
+        .lesson-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .lesson-duration {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+        }
+
+        .lesson-status {
+            color: #22c55e;
+            font-size: 1rem;
+        }
+
+        /* Sidebar Cards */
+        .sidebar-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .enroll-card {
+            text-align: center;
+        }
+
+        .price-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00d1ff;
+            margin-bottom: 1rem;
+        }
+
+        .price-display.free {
+            color: #22c55e;
+        }
+
+        .enroll-btn {
+            background: linear-gradient(45deg, #00d1ff, #6b5b9a);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .enroll-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 209, 255, 0.4);
+        }
+
+        .enroll-btn.enrolled {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .course-includes {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .course-includes li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .course-includes i {
+            color: #22c55e;
+            width: 16px;
+        }
+
+        /* Progress Card */
+        .progress-card h3 {
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d1ff, #6b5b9a);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        /* Discussion Section */
+        .discussion-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .discussion-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #6b5b9a, #00d1ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .discussion-content {
+            flex: 1;
+        }
+
+        .discussion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .discussion-author {
+            font-weight: 600;
+        }
+
+        .discussion-time {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+        }
+
+        .discussion-text {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
+        .add-comment {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .add-comment input {
+            flex: 1;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            color: white;
+        }
+
+        .add-comment input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .add-comment button {
+            background: linear-gradient(45deg, #00d1ff, #6b5b9a);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-comment button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .course-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .course-title {
+                font-size: 2rem;
+            }
+
+            .video-player {
+                height: 250px;
+            }
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                Miha Institute
+            </a>
+            <div class="breadcrumb">
+                <a href="index.html">Home</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="courses.html">Courses</a>
+                <i class="fas fa-chevron-right"></i>
+                <span id="courseBreadcrumb">Course Detail</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="course-layout">
+            <!-- Main Content -->
+            <div class="course-main">
+                <!-- Course Header -->
+                <section class="course-header">
+                    <div class="course-meta">
+                        <span class="course-category" id="courseCategory">Programming</span>
+                        <div class="course-rating">
+                            <i class="fas fa-star"></i>
+                            <span id="courseRating">4.9</span>
+                            <span>(<span id="courseStudents">1,247</span> students)</span>
+                        </div>
+                    </div>
+                    <h1 class="course-title" id="courseTitle">Full Stack Web Development</h1>
+                    <p class="course-instructor">by <span id="courseInstructor">Dr. Sarah Johnson</span></p>
+                    <p class="course-description" id="courseDescription">
+                        Master modern web development with React, Node.js, and MongoDB. Build real-world applications from scratch with hands-on projects and expert guidance.
+                    </p>
+                </section>
+
+                <!-- Video Section -->
+                <section class="video-section">
+                    <div class="video-player">
+                        <div class="video-placeholder">
+                            <div class="play-button-large">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <h3>Introduction to Full Stack Development</h3>
+                            <p>Click to start the first lesson</p>
+                        </div>
+                    </div>
+                    <div class="video-controls">
+                        <div class="video-info">
+                            <h3>Lesson 1: Getting Started</h3>
+                            <p>Duration: 15:30 | Next: Setting up Development Environment</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Course Content -->
+                <section class="course-content">
+                    <h2 class="section-title">
+                        <i class="fas fa-list"></i>
+                        Course Content
+                    </h2>
+                    <div id="courseContent">
+                        <!-- Course content will be populated by JavaScript -->
+                    </div>
+                </section>
+
+                <!-- Discussion Section -->
+                <section class="course-content">
+                    <h2 class="section-title">
+                        <i class="fas fa-comments"></i>
+                        Discussion
+                    </h2>
+                    <div id="discussionSection">
+                        <!-- Discussion will be populated by JavaScript -->
+                    </div>
+                    <div class="add-comment">
+                        <input type="text" placeholder="Add a comment..." id="commentInput">
+                        <button onclick="addComment()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="course-sidebar">
+                <!-- Enrollment Card -->
+                <div class="sidebar-card enroll-card">
+                    <div class="price-display" id="coursePrice">$299</div>
+                    <button class="enroll-btn" id="enrollBtn" onclick="toggleEnrollment()">
+                        <i class="fas fa-shopping-cart"></i>
+                        Enroll Now
+                    </button>
+                    <ul class="course-includes">
+                        <li><i class="fas fa-check"></i> <span id="courseLessons">45</span> video lessons</li>
+                        <li><i class="fas fa-check"></i> Downloadable resources</li>
+                        <li><i class="fas fa-check"></i> Certificate of completion</li>
+                        <li><i class="fas fa-check"></i> Lifetime access</li>
+                        <li><i class="fas fa-check"></i> Community support</li>
+                    </ul>
+                </div>
+
+                <!-- Progress Card -->
+                <div class="sidebar-card progress-card" id="progressCard" style="display: none;">
+                    <h3>Your Progress</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">0% Complete</div>
+                </div>
+
+                <!-- Course Info -->
+                <div class="sidebar-card">
+                    <h3>Course Information</h3>
+                    <ul class="course-includes">
+                        <li><i class="fas fa-clock"></i> Duration: <span id="courseDuration">12 weeks</span></li>
+                        <li><i class="fas fa-signal"></i> Level: <span id="courseLevel">Intermediate</span></li>
+                        <li><i class="fas fa-globe"></i> Language: English</li>
+                        <li><i class="fas fa-mobile-alt"></i> Mobile friendly</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sample course data (same as courses.html)
+        const coursesData = [
+            {
+                id: 1,
+                title: 'Full Stack Web Development',
+                instructor: 'Dr. Sarah Johnson',
+                category: 'programming',
+                level: 'intermediate',
+                rating: 4.9,
+                students: 1247,
+                duration: '12 weeks',
+                lessons: 45,
+                price: 299,
+                description: 'Master modern web development with React, Node.js, and MongoDB. Build real-world applications from scratch with hands-on projects and expert guidance.',
+                icon: 'fas fa-code',
+                enrolled: false,
+                progress: 0,
+                content: [
+                    { title: 'Introduction to Full Stack Development', duration: '15:30', completed: false },
+                    { title: 'Setting up Development Environment', duration: '22:15', completed: false },
+                    { title: 'HTML5 and CSS3 Fundamentals', duration: '35:45', completed: false },
+                    { title: 'JavaScript ES6+ Features', duration: '28:20', completed: false },
+                    { title: 'React.js Basics', duration: '42:10', completed: false },
+                    { title: 'State Management with Redux', duration: '38:55', completed: false },
+                    { title: 'Node.js and Express.js', duration: '45:30', completed: false },
+                    { title: 'MongoDB and Mongoose', duration: '33:25', completed: false }
+                ]
+            }
+            // Add other courses here if needed
+        ];
+
+        const discussions = [
+            {
+                author: 'John Student',
+                time: '2 hours ago',
+                text: 'Great course! The explanations are very clear and the projects are practical.'
+            },
+            {
+                author: 'Sarah Wilson',
+                time: '1 day ago',
+                text: 'I love how the instructor breaks down complex concepts into digestible parts.'
+            },
+            {
+                author: 'Mike Johnson',
+                time: '3 days ago',
+                text: 'The hands-on projects really help solidify the learning. Highly recommended!'
+            }
+        ];
+
+        let currentCourse = null;
+
+        // Get course ID from URL
+        function getCourseId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return parseInt(urlParams.get('id')) || 1;
+        }
+
+        // Load course data
+        function loadCourse() {
+            const courseId = getCourseId();
+            currentCourse = coursesData.find(course => course.id === courseId) || coursesData[0];
+
+            // Update page content
+            document.getElementById('courseBreadcrumb').textContent = currentCourse.title;
+            document.getElementById('courseCategory').textContent = currentCourse.category;
+            document.getElementById('courseRating').textContent = currentCourse.rating;
+            document.getElementById('courseStudents').textContent = currentCourse.students.toLocaleString();
+            document.getElementById('courseTitle').textContent = currentCourse.title;
+            document.getElementById('courseInstructor').textContent = currentCourse.instructor;
+            document.getElementById('courseDescription').textContent = currentCourse.description;
+            document.getElementById('coursePrice').textContent = currentCourse.price === 0 ? 'Free' : `$${currentCourse.price}`;
+            document.getElementById('courseLessons').textContent = currentCourse.lessons;
+            document.getElementById('courseDuration').textContent = currentCourse.duration;
+            document.getElementById('courseLevel').textContent = currentCourse.level;
+
+            // Update enrollment status
+            updateEnrollmentStatus();
+            
+            // Load course content
+            loadCourseContent();
+            
+            // Load discussions
+            loadDiscussions();
+        }
+
+        // Update enrollment status
+        function updateEnrollmentStatus() {
+            const enrollBtn = document.getElementById('enrollBtn');
+            const progressCard = document.getElementById('progressCard');
+
+            if (currentCourse.enrolled) {
+                enrollBtn.innerHTML = '<i class="fas fa-play"></i> Continue Learning';
+                enrollBtn.className = 'enroll-btn enrolled';
+                progressCard.style.display = 'block';
+                
+                // Update progress
+                const progressFill = document.getElementById('progressFill');
+                const progressText = document.getElementById('progressText');
+                progressFill.style.width = `${currentCourse.progress}%`;
+                progressText.textContent = `${currentCourse.progress}% Complete`;
+            } else {
+                enrollBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Enroll Now';
+                enrollBtn.className = 'enroll-btn';
+                progressCard.style.display = 'none';
+            }
+        }
+
+        // Load course content
+        function loadCourseContent() {
+            const contentContainer = document.getElementById('courseContent');
+            contentContainer.innerHTML = '';
+
+            if (currentCourse.content) {
+                currentCourse.content.forEach((lesson, index) => {
+                    const lessonItem = document.createElement('div');
+                    lessonItem.className = 'lesson-item';
+                    lessonItem.innerHTML = `
+                        <div class="lesson-number">${index + 1}</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">${lesson.title}</div>
+                            <div class="lesson-duration">${lesson.duration}</div>
+                        </div>
+                        <div class="lesson-status">
+                            ${lesson.completed ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-play-circle"></i>'}
+                        </div>
+                    `;
+                    
+                    lessonItem.addEventListener('click', () => {
+                        if (currentCourse.enrolled) {
+                            // Mark as completed and update progress
+                            lesson.completed = true;
+                            updateProgress();
+                            loadCourseContent(); // Refresh content
+                        } else {
+                            alert('Please enroll in the course to access lessons.');
+                        }
+                    });
+                    
+                    contentContainer.appendChild(lessonItem);
+                });
+            }
+        }
+
+        // Update progress
+        function updateProgress() {
+            if (currentCourse.content) {
+                const completedLessons = currentCourse.content.filter(lesson => lesson.completed).length;
+                const totalLessons = currentCourse.content.length;
+                currentCourse.progress = Math.round((completedLessons / totalLessons) * 100);
+                updateEnrollmentStatus();
+            }
+        }
+
+        // Load discussions
+        function loadDiscussions() {
+            const discussionContainer = document.getElementById('discussionSection');
+            discussionContainer.innerHTML = '';
+
+            discussions.forEach(discussion => {
+                const discussionItem = document.createElement('div');
+                discussionItem.className = 'discussion-item';
+                discussionItem.innerHTML = `
+                    <div class="discussion-avatar">${discussion.author.split(' ').map(n => n[0]).join('')}</div>
+                    <div class="discussion-content">
+                        <div class="discussion-header">
+                            <div class="discussion-author">${discussion.author}</div>
+                            <div class="discussion-time">${discussion.time}</div>
+                        </div>
+                        <div class="discussion-text">${discussion.text}</div>
+                    </div>
+                `;
+                discussionContainer.appendChild(discussionItem);
+            });
+        }
+
+        // Toggle enrollment
+        function toggleEnrollment() {
+            const currentUser = localStorage.getItem('mihaCurrentUser') || sessionStorage.getItem('mihaCurrentUser');
+            
+            if (!currentUser) {
+                alert('Please login to enroll in courses.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            if (!currentCourse.enrolled) {
+                // Enroll in course
+                currentCourse.enrolled = true;
+                currentCourse.progress = 0;
+                alert('Successfully enrolled in the course!');
+            }
+            
+            updateEnrollmentStatus();
+        }
+
+        // Add comment
+        function addComment() {
+            const commentInput = document.getElementById('commentInput');
+            const commentText = commentInput.value.trim();
+            
+            if (!commentText) return;
+
+            const currentUser = localStorage.getItem('mihaCurrentUser') || sessionStorage.getItem('mihaCurrentUser');
+            
+            if (!currentUser) {
+                alert('Please login to add comments.');
+                return;
+            }
+
+            const userData = JSON.parse(currentUser);
+            
+            discussions.unshift({
+                author: userData.name,
+                time: 'Just now',
+                text: commentText
+            });
+
+            commentInput.value = '';
+            loadDiscussions();
+        }
+
+        // Initialize page
+        window.addEventListener('load', function() {
+            loadCourse();
+        });
+
+        // Handle Enter key in comment input
+        document.getElementById('commentInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addComment();
+            }
+        });
+    </script>
+</body>
+</html>

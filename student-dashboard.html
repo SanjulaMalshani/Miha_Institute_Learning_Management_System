@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Miha Institute</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            /* Changed to dark gradient background */
+            background: linear-gradient(-45deg, #0f0f23, #1a1a2e, #16213e, #0f3460);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
+            min-height: 100vh;
+            color: white;
+        }
+
+        /* Header */
+        .header {
+            /* Changed to dark glassmorphism background */
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            color: #00d1ff;
+            font-size: 1.8rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #00d1ff, #6b5b9a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .user-details h3 {
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .user-details p {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .logout-btn {
+            background: rgba(220, 38, 38, 0.2);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            color: #fca5a5;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 38, 38, 0.3);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            gap: 2rem;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-section h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-section p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            /* Changed to dark glassmorphism background */
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #00d1ff;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .main-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Card Styles */
+        .card {
+            /* Changed to dark glassmorphism background */
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title i {
+            color: #00d1ff;
+        }
+
+        .view-all {
+            color: #00d1ff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .view-all:hover {
+            color: white;
+        }
+
+        /* Course Cards */
+        .course-item {
+            /* Changed to darker background for better contrast */
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .course-item:hover {
+            background: rgba(0, 0, 0, 0.4);
+            transform: translateX(5px);
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .course-info h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .course-info p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .course-progress {
+            text-align: right;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.25rem;
+        }
+
+        .progress-bar {
+            width: 100px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d1ff, #6b5b9a);
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+
+        /* Assignment Items */
+        .assignment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            /* Changed to darker background for better contrast */
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .assignment-item:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .assignment-info h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .assignment-info p {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .assignment-status {
+            text-align: right;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .status-submitted {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-overdue {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Circular Progress */
+        .circular-progress {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1rem;
+        }
+
+        .circular-progress svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .circular-progress circle {
+            fill: none;
+            stroke-width: 8;
+        }
+
+        .progress-bg {
+            stroke: rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-bar-circle {
+            stroke: #00d1ff;
+            stroke-linecap: round;
+            transition: stroke-dasharray 1s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00d1ff;
+        }
+
+        /* Grade Items */
+        .grade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .grade-item:last-child {
+            border-bottom: none;
+        }
+
+        .grade-subject {
+            font-weight: 500;
+        }
+
+        .grade-score {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .grade-a { color: #22c55e; }
+        .grade-b { color: #3b82f6; }
+        .grade-c { color: #f59e0b; }
+        .grade-d { color: #ef4444; }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            /* Changed to darker background for better contrast */
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 0, 0, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .action-btn i {
+            font-size: 1.5rem;
+            color: #00d1ff;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .user-info {
+                gap: 0.5rem;
+            }
+
+            .user-details {
+                display: none;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                Miha Institute
+            </a>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">JS</div>
+                <div class="user-details">
+                    <h3 id="userName">John Student</h3>
+                    <p>Student Dashboard</p>
+                </div>
+                <a href="#" class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Section -->
+        <section class="welcome-section fade-in">
+            <h1>Welcome back, <span id="welcomeName">John</span>!</h1>
+            <p>Continue your learning journey and track your progress</p>
+        </section>
+
+        <!-- Stats Grid -->
+        <section class="stats-grid fade-in">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="stat-number" id="enrolledCourses">5</div>
+                <div class="stat-label">Enrolled Courses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <div class="stat-number" id="pendingAssignments">3</div>
+                <div class="stat-label">Pending Assignments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="stat-number" id="averageGrade">A-</div>
+                <div class="stat-label">Average Grade</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-certificate"></i>
+                </div>
+                <div class="stat-number" id="completedCourses">2</div>
+                <div class="stat-label">Completed Courses</div>
+            </div>
+        </section>
+
+        <!-- Dashboard Grid -->
+        <section class="dashboard-grid fade-in">
+            <!-- Main Panel -->
+            <div class="main-panel">
+                <!-- Enrolled Courses -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-book-open"></i>
+                            My Courses
+                        </h2>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    <div id="coursesList">
+                        <!-- Courses will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Recent Assignments -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-clipboard-list"></i>
+                            Recent Assignments
+                        </h2>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    <div id="assignmentsList">
+                        <!-- Assignments will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side Panel -->
+            <div class="side-panel">
+                <!-- Overall Progress -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-chart-pie"></i>
+                            Overall Progress
+                        </h2>
+                    </div>
+                    <div class="circular-progress">
+                        <svg>
+                            <circle class="progress-bg" cx="60" cy="60" r="52"></circle>
+                            <circle class="progress-bar-circle" cx="60" cy="60" r="52" id="overallProgressCircle"></circle>
+                        </svg>
+                        <div class="progress-text" id="overallProgressText">78%</div>
+                    </div>
+                    <p style="text-align: center; color: rgba(255, 255, 255, 0.8); font-size: 0.9rem;">
+                        Keep up the great work!
+                    </p>
+                </div>
+
+                <!-- Recent Grades -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-star"></i>
+                            Recent Grades
+                        </h2>
+                    </div>
+                    <div id="gradesList">
+                        <!-- Grades will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-bolt"></i>
+                            Quick Actions
+                        </h2>
+                    </div>
+                    <div class="quick-actions">
+                        <a href="#" class="action-btn">
+                            <i class="fas fa-search"></i>
+                            Browse Courses
+                        </a>
+                        <a href="#" class="action-btn">
+                            <i class="fas fa-upload"></i>
+                            Submit Assignment
+                        </a>
+                        <a href="#" class="action-btn">
+                            <i class="fas fa-comments"></i>
+                            Messages
+                        </a>
+                        <a href="#" class="action-btn">
+                            <i class="fas fa-calendar"></i>
+                            Schedule
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Check authentication with improved timing and debugging
+        function checkAuth() {
+            console.log('[v0] Checking authentication...');
+            
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const currentUser = localStorage.getItem('mihaCurrentUser') || sessionStorage.getItem('mihaCurrentUser');
+                    console.log('[v0] Current user data:', currentUser);
+                    
+                    if (!currentUser) {
+                        console.log('[v0] No user data found, redirecting to login');
+                        window.location.href = 'login.html';
+                        resolve(null);
+                        return;
+                    }
+                    
+                    let userData;
+                    try {
+                        userData = JSON.parse(currentUser);
+                        console.log('[v0] Parsed user data:', userData);
+                    } catch (error) {
+                        console.log('[v0] Error parsing user data:', error);
+                        localStorage.removeItem('mihaCurrentUser');
+                        sessionStorage.removeItem('mihaCurrentUser');
+                        window.location.href = 'login.html';
+                        resolve(null);
+                        return;
+                    }
+                    
+                    if (userData.role !== 'student') {
+                        console.log('[v0] User role mismatch. Expected: student, Got:', userData.role);
+                        window.location.href = 'login.html';
+                        resolve(null);
+                        return;
+                    }
+                    
+                    console.log('[v0] Authentication successful for student:', userData.name);
+                    resolve(userData);
+                }, 100); // Small delay to ensure data is available
+            });
+        }
+
+        // Initialize dashboard with async authentication
+        async function initDashboard() {
+            const user = await checkAuth();
+            if (!user) return;
+
+            // Update user info
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('welcomeName').textContent = user.name.split(' ')[0];
+            document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('');
+
+            // Load dashboard data
+            loadCourses();
+            loadAssignments();
+            loadGrades();
+            updateOverallProgress();
+        }
+
+        // Sample data
+        const sampleCourses = [
+            {
+                id: 1,
+                title: 'Full Stack Web Development',
+                instructor: 'Dr. Sarah Johnson',
+                progress: 75,
+                totalLessons: 24,
+                completedLessons: 18
+            },
+            {
+                id: 2,
+                title: 'Machine Learning Fundamentals',
+                instructor: 'Prof. Michael Chen',
+                progress: 60,
+                totalLessons: 20,
+                completedLessons: 12
+            },
+            {
+                id: 3,
+                title: 'Mobile App Development',
+                instructor: 'Jane Smith',
+                progress: 90,
+                totalLessons: 16,
+                completedLessons: 14
+            },
+            {
+                id: 4,
+                title: 'Data Science with Python',
+                instructor: 'Dr. Robert Wilson',
+                progress: 45,
+                totalLessons: 22,
+                completedLessons: 10
+            }
+        ];
+
+        const sampleAssignments = [
+            {
+                id: 1,
+                title: 'React Component Project',
+                course: 'Full Stack Web Development',
+                dueDate: '2024-01-15',
+                status: 'pending'
+            },
+            {
+                id: 2,
+                title: 'ML Algorithm Implementation',
+                course: 'Machine Learning Fundamentals',
+                dueDate: '2024-01-12',
+                status: 'submitted'
+            },
+            {
+                id: 3,
+                title: 'Mobile UI Design',
+                course: 'Mobile App Development',
+                dueDate: '2024-01-10',
+                status: 'overdue'
+            },
+            {
+                id: 4,
+                title: 'Data Analysis Report',
+                course: 'Data Science with Python',
+                dueDate: '2024-01-18',
+                status: 'pending'
+            }
+        ];
+
+        const sampleGrades = [
+            { subject: 'Web Development Quiz', grade: 'A', score: 92 },
+            { subject: 'ML Assignment #2', grade: 'B+', score: 87 },
+            { subject: 'Mobile App Project', grade: 'A-', score: 89 },
+            { subject: 'Python Fundamentals', grade: 'A', score: 95 },
+            { subject: 'Database Design', grade: 'B', score: 84 }
+        ];
+
+        // Load courses
+        function loadCourses() {
+            const coursesList = document.getElementById('coursesList');
+            coursesList.innerHTML = '';
+
+            const enrolledCourses = JSON.parse(localStorage.getItem('mihaEnrolledCourses') || '[]');
+            const allCourses = JSON.parse(localStorage.getItem('mihaCourses') || '[]');
+            
+            // If no enrolled courses, show sample data
+            const coursesToShow = enrolledCourses.length > 0 ? enrolledCourses : sampleCourses;
+
+            coursesToShow.forEach(course => {
+                const courseItem = document.createElement('div');
+                courseItem.className = 'course-item';
+                courseItem.innerHTML = `
+                    <div class="course-header">
+                        <div class="course-info">
+                            <h4>${course.title}</h4>
+                            <p>Instructor: ${course.instructor}</p>
+                        </div>
+                        <div class="course-progress">
+                            <div class="progress-text">${course.progress || 0}% Complete</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${course.progress || 0}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                coursesList.appendChild(courseItem);
+            });
+        }
+
+        // Load assignments
+        function loadAssignments() {
+            const assignmentsList = document.getElementById('assignmentsList');
+            assignmentsList.innerHTML = '';
+
+            const assignments = JSON.parse(localStorage.getItem('mihaAssignments') || '[]');
+            const assignmentsToShow = assignments.length > 0 ? assignments : sampleAssignments;
+
+            assignmentsToShow.forEach(assignment => {
+                const assignmentItem = document.createElement('div');
+                assignmentItem.className = 'assignment-item';
+                
+                const statusClass = `status-${assignment.status || 'pending'}`;
+                const statusText = (assignment.status || 'pending').charAt(0).toUpperCase() + (assignment.status || 'pending').slice(1);
+                
+                assignmentItem.innerHTML = `
+                    <div class="assignment-info">
+                        <h4>${assignment.title}</h4>
+                        <p>${assignment.course} • Due: ${new Date(assignment.dueDate).toLocaleDateString()}</p>
+                    </div>
+                    <div class="assignment-status">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                `;
+                assignmentsList.appendChild(assignmentItem);
+            });
+        }
+
+        // Load grades
+        function loadGrades() {
+            const gradesList = document.getElementById('gradesList');
+            gradesList.innerHTML = '';
+
+            const grades = JSON.parse(localStorage.getItem('mihaGrades') || '[]');
+            const gradesToShow = grades.length > 0 ? grades : sampleGrades;
+
+            gradesToShow.forEach(grade => {
+                const gradeItem = document.createElement('div');
+                gradeItem.className = 'grade-item';
+                
+                const gradeClass = `grade-${grade.grade.charAt(0).toLowerCase()}`;
+                
+                gradeItem.innerHTML = `
+                    <div class="grade-subject">${grade.subject}</div>
+                    <div class="grade-score ${gradeClass}">${grade.grade}</div>
+                `;
+                gradesList.appendChild(gradeItem);
+            });
+        }
+
+        // Update overall progress
+        function updateOverallProgress() {
+            const progress = 78; // Calculate based on courses
+            const circle = document.getElementById('overallProgressCircle');
+            const text = document.getElementById('overallProgressText');
+            
+            const circumference = 2 * Math.PI * 52;
+            const offset = circumference - (progress / 100) * circumference;
+            
+            circle.style.strokeDasharray = circumference;
+            circle.style.strokeDashoffset = offset;
+            
+            text.textContent = `${progress}%`;
+        }
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('mihaCurrentUser');
+            sessionStorage.removeItem('mihaCurrentUser');
+            window.location.href = 'login.html';
+        });
+
+        // Initialize dashboard on load with better timing
+        window.addEventListener('load', function() {
+            setTimeout(initDashboard, 200);
+        });
+    </script>
+</body>
+</html>

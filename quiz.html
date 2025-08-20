@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - Miha Institute</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .quiz-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .quiz-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .quiz-info-item {
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+
+        .quiz-info-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            display: block;
+        }
+
+        .timer {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            position: sticky;
+            top: 100px;
+            z-index: 50;
+        }
+
+        .timer-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .timer-warning {
+            color: #ff6b6b;
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #45b7d1);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            color: white;
+            text-align: center;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: none;
+        }
+
+        .question-card.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .question-number {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .option.selected {
+            background: rgba(70, 183, 209, 0.3);
+            border-color: #45b7d1;
+        }
+
+        .option-letter {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-letter {
+            background: #45b7d1;
+        }
+
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-container {
+            display: none;
+            text-align: center;
+        }
+
+        .results-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .results-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .score-display {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #4ecdc4;
+            margin-bottom: 1rem;
+        }
+
+        .score-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .score-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .score-item-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            display: block;
+        }
+
+        .score-item-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        .grade-a { background: rgba(40, 167, 69, 0.3); color: #28a745; }
+        .grade-b { background: rgba(23, 162, 184, 0.3); color: #17a2b8; }
+        .grade-c { background: rgba(255, 193, 7, 0.3); color: #ffc107; }
+        .grade-d { background: rgba(253, 126, 20, 0.3); color: #fd7e14; }
+        .grade-f { background: rgba(220, 53, 69, 0.3); color: #dc3545; }
+
+        @media (max-width: 768px) {
+            .quiz-info {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .quiz-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .score-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="logo">Miha Institute</a>
+            <div class="nav-links">
+                <a href="student-dashboard.html">Dashboard</a>
+                <a href="courses.html">Courses</a>
+                <a href="assignments.html">Assignments</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="quiz-header">
+            <h1 class="quiz-title" id="quizTitle">Web Development Fundamentals Quiz</h1>
+            <div class="quiz-info">
+                <div class="quiz-info-item">
+                    <span class="quiz-info-value" id="totalQuestions">10</span>
+                    <span>Questions</span>
+                </div>
+                <div class="quiz-info-item">
+                    <span class="quiz-info-value" id="timeLimit">30</span>
+                    <span>Minutes</span>
+                </div>
+                <div class="quiz-info-item">
+                    <span class="quiz-info-value">100</span>
+                    <span>Points</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="timer" id="timer">
+            <div class="timer-display" id="timerDisplay">30:00</div>
+            <div>Time Remaining</div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 of 10</div>
+        </div>
+
+        <div id="quizContainer">
+            <!-- Questions will be populated by JavaScript -->
+        </div>
+
+        <div class="quiz-navigation">
+            <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>Previous</button>
+            <div>
+                <button class="btn btn-secondary" id="skipBtn" onclick="skipQuestion()">Skip</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next</button>
+                <button class="btn btn-primary" id="submitBtn" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="results-card">
+                <h2 class="results-title">Quiz Completed!</h2>
+                <div class="score-display" id="finalScore">85%</div>
+                <div class="grade-badge" id="gradeBadge">Grade: B</div>
+                <div class="score-details">
+                    <div class="score-item">
+                        <span class="score-item-value" id="correctAnswers">8</span>
+                        <span class="score-item-label">Correct</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-item-value" id="incorrectAnswers">2</span>
+                        <span class="score-item-label">Incorrect</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-item-value" id="skippedAnswers">0</span>
+                        <span class="score-item-label">Skipped</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-item-value" id="timeTaken">25:30</span>
+                        <span class="score-item-label">Time Taken</span>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <button class="btn btn-primary" onclick="retakeQuiz()">Retake Quiz</button>
+                    <button class="btn btn-secondary" onclick="goToDashboard()">Back to Dashboard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample quiz data
+        const quizData = {
+            title: "Web Development Fundamentals Quiz",
+            timeLimit: 30, // minutes
+            questions: [
+                {
+                    id: 1,
+                    question: "What does HTML stand for?",
+                    options: [
+                        "Hyper Text Markup Language",
+                        "High Tech Modern Language",
+                        "Home Tool Markup Language",
+                        "Hyperlink and Text Markup Language"
+                    ],
+                    correct: 0
+                },
+                {
+                    id: 2,
+                    question: "Which CSS property is used to change the text color?",
+                    options: [
+                        "font-color",
+                        "text-color",
+                        "color",
+                        "foreground-color"
+                    ],
+                    correct: 2
+                },
+                {
+                    id: 3,
+                    question: "What is the correct way to create a function in JavaScript?",
+                    options: [
+                        "function = myFunction() {}",
+                        "function myFunction() {}",
+                        "create myFunction() {}",
+                        "def myFunction() {}"
+                    ],
+                    correct: 1
+                },
+                {
+                    id: 4,
+                    question: "Which HTML element is used for the largest heading?",
+                    options: [
+                        "<heading>",
+                        "<h6>",
+                        "<h1>",
+                        "<header>"
+                    ],
+                    correct: 2
+                },
+                {
+                    id: 5,
+                    question: "What does CSS stand for?",
+                    options: [
+                        "Creative Style Sheets",
+                        "Cascading Style Sheets",
+                        "Computer Style Sheets",
+                        "Colorful Style Sheets"
+                    ],
+                    correct: 1
+                },
+                {
+                    id: 6,
+                    question: "Which JavaScript method is used to add an element to the end of an array?",
+                    options: [
+                        "append()",
+                        "push()",
+                        "add()",
+                        "insert()"
+                    ],
+                    correct: 1
+                },
+                {
+                    id: 7,
+                    question: "What is the correct HTML element for inserting a line break?",
+                    options: [
+                        "<break>",
+                        "<lb>",
+                        "<br>",
+                        "<newline>"
+                    ],
+                    correct: 2
+                },
+                {
+                    id: 8,
+                    question: "Which CSS property is used to make text bold?",
+                    options: [
+                        "font-style",
+                        "text-decoration",
+                        "font-weight",
+                        "text-style"
+                    ],
+                    correct: 2
+                },
+                {
+                    id: 9,
+                    question: "What is the correct way to comment in JavaScript?",
+                    options: [
+                        "<!-- This is a comment -->",
+                        "// This is a comment",
+                        "/* This is a comment */",
+                        "Both B and C"
+                    ],
+                    correct: 3
+                },
+                {
+                    id: 10,
+                    question: "Which HTML attribute specifies an alternate text for an image?",
+                    options: [
+                        "title",
+                        "alt",
+                        "src",
+                        "longdesc"
+                    ],
+                    correct: 1
+                }
+            ]
+        };
+
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let timeRemaining = quizData.timeLimit * 60; // Convert to seconds
+        let timerInterval;
+        let quizStartTime;
+
+        function initializeQuiz() {
+            document.getElementById('quizTitle').textContent = quizData.title;
+            document.getElementById('totalQuestions').textContent = quizData.questions.length;
+            document.getElementById('timeLimit').textContent = quizData.timeLimit;
+            
+            userAnswers = new Array(quizData.questions.length).fill(null);
+            quizStartTime = Date.now();
+            
+            renderQuestion();
+            startTimer();
+            updateProgress();
+        }
+
+        function renderQuestion() {
+            const container = document.getElementById('quizContainer');
+            const question = quizData.questions[currentQuestion];
+            
+            container.innerHTML = `
+                <div class="question-card active">
+                    <div class="question-number">Question ${currentQuestion + 1} of ${quizData.questions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option ${userAnswers[currentQuestion] === index ? 'selected' : ''}" 
+                                 onclick="selectOption(${index})">
+                                <div class="option-letter">${String.fromCharCode(65 + index)}</div>
+                                <div>${option}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            updateNavigationButtons();
+        }
+
+        function selectOption(optionIndex) {
+            userAnswers[currentQuestion] = optionIndex;
+            renderQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizData.questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+                updateProgress();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+                updateProgress();
+            }
+        }
+
+        function skipQuestion() {
+            userAnswers[currentQuestion] = null;
+            nextQuestion();
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            prevBtn.disabled = currentQuestion === 0;
+            
+            if (currentQuestion === quizData.questions.length - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'inline-flex';
+            } else {
+                nextBtn.style.display = 'inline-flex';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / quizData.questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = 
+                `Question ${currentQuestion + 1} of ${quizData.questions.length}`;
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            const timerDisplay = document.getElementById('timerDisplay');
+            timerDisplay.textContent = display;
+            
+            if (timeRemaining <= 300) { // 5 minutes warning
+                timerDisplay.classList.add('timer-warning');
+            }
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            
+            const timeTaken = Math.floor((Date.now() - quizStartTime) / 1000);
+            const results = calculateResults(timeTaken);
+            
+            displayResults(results);
+        }
+
+        function calculateResults(timeTaken) {
+            let correct = 0;
+            let incorrect = 0;
+            let skipped = 0;
+            
+            userAnswers.forEach((answer, index) => {
+                if (answer === null) {
+                    skipped++;
+                } else if (answer === quizData.questions[index].correct) {
+                    correct++;
+                } else {
+                    incorrect++;
+                }
+            });
+            
+            const percentage = Math.round((correct / quizData.questions.length) * 100);
+            const grade = getGrade(percentage);
+            
+            return {
+                correct,
+                incorrect,
+                skipped,
+                percentage,
+                grade,
+                timeTaken
+            };
+        }
+
+        function getGrade(percentage) {
+            if (percentage >= 90) return 'A';
+            if (percentage >= 80) return 'B';
+            if (percentage >= 70) return 'C';
+            if (percentage >= 60) return 'D';
+            return 'F';
+        }
+
+        function displayResults(results) {
+            document.getElementById('quizContainer').style.display = 'none';
+            document.querySelector('.quiz-navigation').style.display = 'none';
+            document.getElementById('timer').style.display = 'none';
+            document.querySelector('.progress-container').style.display = 'none';
+            
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.style.display = 'block';
+            
+            document.getElementById('finalScore').textContent = results.percentage + '%';
+            document.getElementById('correctAnswers').textContent = results.correct;
+            document.getElementById('incorrectAnswers').textContent = results.incorrect;
+            document.getElementById('skippedAnswers').textContent = results.skipped;
+            
+            const minutes = Math.floor(results.timeTaken / 60);
+            const seconds = results.timeTaken % 60;
+            document.getElementById('timeTaken').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            const gradeBadge = document.getElementById('gradeBadge');
+            gradeBadge.textContent = `Grade: ${results.grade}`;
+            gradeBadge.className = `grade-badge grade-${results.grade.toLowerCase()}`;
+        }
+
+        function retakeQuiz() {
+            location.reload();
+        }
+
+        function goToDashboard() {
+            window.location.href = 'student-dashboard.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+
+        // Check authentication and initialize quiz
+        window.addEventListener('load', function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            if (!currentUser.email) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            initializeQuiz();
+        });
+
+        // Prevent page refresh during quiz
+        window.addEventListener('beforeunload', function(e) {
+            if (timerInterval) {
+                e.preventDefault();
+                e.returnValue = 'Are you sure you want to leave? Your quiz progress will be lost.';
+            }
+        });
+    </script>
+</body>
+</html>

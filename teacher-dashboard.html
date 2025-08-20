@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Miha Institute</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            /* Changed to dark gradient background */
+            background: linear-gradient(-45deg, #0f0f23, #1a1a2e, #16213e, #0f3460);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
+            min-height: 100vh;
+            color: white;
+        }
+
+        /* Header */
+        .header {
+            /* Changed to dark glassmorphism background */
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            color: #00d1ff;
+            font-size: 1.8rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #00d1ff, #6b5b9a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .user-details h3 {
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .user-details p {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .logout-btn {
+            background: rgba(220, 38, 38, 0.2);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            color: #fca5a5;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 38, 38, 0.3);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            gap: 2rem;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-section h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-section p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            /* Changed to dark glassmorphism background */
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #00d1ff;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .main-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Card Styles */
+        .card {
+            /* Changed to dark glassmorphism background */
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title i {
+            color: #00d1ff;
+        }
+
+        .add-btn {
+            background: linear-gradient(45deg, #00d1ff, #6b5b9a);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 209, 255, 0.3);
+        }
+
+        /* Course Management */
+        .course-item {
+            /* Changed to darker background for better contrast */
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .course-item:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .course-info h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .course-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .course-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            /* Changed to darker background for better contrast */
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .action-btn.edit { color: #3b82f6; }
+        .action-btn.delete { color: #ef4444; }
+
+        /* Student Progress */
+        .student-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            /* Changed to darker background for better contrast */
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .student-item:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #6b5b9a, #00d1ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .student-details h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .student-details p {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .student-progress {
+            text-align: right;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.25rem;
+        }
+
+        .progress-bar {
+            width: 80px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d1ff, #6b5b9a);
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+
+        /* Assignment Items */
+        .assignment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            /* Changed to darker background for better contrast */
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .assignment-item:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .assignment-info h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .assignment-info p {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .assignment-stats {
+            text-align: right;
+            font-size: 0.9rem;
+        }
+
+        .submissions-count {
+            color: #00d1ff;
+            font-weight: 600;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .quick-action-btn {
+            /* Changed to darker background for better contrast */
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .quick-action-btn:hover {
+            background: rgba(0, 0, 0, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .quick-action-btn i {
+            font-size: 1.5rem;
+            color: #00d1ff;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            /* Changed to dark glassmorphism background */
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            /* Changed to darker input background */
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00d1ff;
+            box-shadow: 0 0 10px rgba(0, 209, 255, 0.3);
+        }
+
+        .file-upload {
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: #00d1ff;
+            background: rgba(0, 209, 255, 0.1);
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #00d1ff, #6b5b9a);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 209, 255, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .user-info {
+                gap: 0.5rem;
+            }
+
+            .user-details {
+                display: none;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .course-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                Miha Institute
+            </a>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">JT</div>
+                <div class="user-details">
+                    <h3 id="userName">Jane Teacher</h3>
+                    <p>Teacher Dashboard</p>
+                </div>
+                <a href="#" class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Section -->
+        <section class="welcome-section fade-in">
+            <h1>Welcome back, <span id="welcomeName">Jane</span>!</h1>
+            <p>Manage your courses, track student progress, and create engaging content</p>
+        </section>
+
+        <!-- Stats Grid -->
+        <section class="stats-grid fade-in">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <div class="stat-number" id="totalCourses">4</div>
+                <div class="stat-label">Active Courses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-number" id="totalStudents">127</div>
+                <div class="stat-label">Total Students</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="stat-number" id="totalAssignments">12</div>
+                <div class="stat-label">Active Assignments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-number" id="averageRating">4.8</div>
+                <div class="stat-label">Average Rating</div>
+            </div>
+        </section>
+
+        <!-- Dashboard Grid -->
+        <section class="dashboard-grid fade-in">
+            <!-- Main Panel -->
+            <div class="main-panel">
+                <!-- My Courses -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-book-open"></i>
+                            My Courses
+                        </h2>
+                        <button class="add-btn" onclick="openModal('courseModal')">
+                            <i class="fas fa-plus"></i>
+                            Add Course
+                        </button>
+                    </div>
+                    <div id="coursesList">
+                        <!-- Courses will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Recent Assignments -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-tasks"></i>
+                            Recent Assignments
+                        </h2>
+                        <button class="add-btn" onclick="openModal('assignmentModal')">
+                            <i class="fas fa-plus"></i>
+                            Create Assignment
+                        </button>
+                    </div>
+                    <div id="assignmentsList">
+                        <!-- Assignments will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side Panel -->
+            <div class="side-panel">
+                <!-- Student Progress -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-chart-line"></i>
+                            Student Progress
+                        </h2>
+                    </div>
+                    <div id="studentsList">
+                        <!-- Students will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-bolt"></i>
+                            Quick Actions
+                        </h2>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" onclick="openModal('quizModal')">
+                            <i class="fas fa-question-circle"></i>
+                            Create Quiz
+                        </button>
+                        <button class="quick-action-btn" onclick="openModal('resourceModal')">
+                            <i class="fas fa-upload"></i>
+                            Upload Resource
+                        </button>
+                        <button class="quick-action-btn" onclick="openModal('gradeModal')">
+                            <i class="fas fa-clipboard-check"></i>
+                            Grade Assignments
+                        </button>
+                        <button class="quick-action-btn">
+                            <i class="fas fa-comments"></i>
+                            Messages
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Course Modal -->
+    <div class="modal" id="courseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create New Course</h3>
+                <button class="close-btn" onclick="closeModal('courseModal')">&times;</button>
+            </div>
+            <form id="courseForm">
+                <div class="form-group">
+                    <label for="courseTitle">Course Title</label>
+                    <input type="text" id="courseTitle" placeholder="Enter course title" required>
+                </div>
+                <div class="form-group">
+                    <label for="courseDescription">Description</label>
+                    <textarea id="courseDescription" rows="3" placeholder="Enter course description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="courseCategory">Category</label>
+                    <select id="courseCategory" required>
+                        <option value="">Select category</option>
+                        <option value="programming">Programming</option>
+                        <option value="design">Design</option>
+                        <option value="business">Business</option>
+                        <option value="science">Science</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="courseDuration">Duration (weeks)</label>
+                    <input type="number" id="courseDuration" placeholder="Enter duration" required>
+                </div>
+                <button type="submit" class="submit-btn">Create Course</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assignment Modal -->
+    <div class="modal" id="assignmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create Assignment</h3>
+                <button class="close-btn" onclick="closeModal('assignmentModal')">&times;</button>
+            </div>
+            <form id="assignmentForm">
+                <div class="form-group">
+                    <label for="assignmentTitle">Assignment Title</label>
+                    <input type="text" id="assignmentTitle" placeholder="Enter assignment title" required>
+                </div>
+                <div class="form-group">
+                    <label for="assignmentCourse">Course</label>
+                    <select id="assignmentCourse" required>
+                        <option value="">Select course</option>
+                        <option value="web-dev">Full Stack Web Development</option>
+                        <option value="ml">Machine Learning Fundamentals</option>
+                        <option value="mobile">Mobile App Development</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="assignmentDescription">Description</label>
+                    <textarea id="assignmentDescription" rows="4" placeholder="Enter assignment description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="assignmentDueDate">Due Date</label>
+                    <input type="date" id="assignmentDueDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="assignmentPoints">Points</label>
+                    <input type="number" id="assignmentPoints" placeholder="Enter points" required>
+                </div>
+                <button type="submit" class="submit-btn">Create Assignment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quiz Modal -->
+    <div class="modal" id="quizModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create Quiz</h3>
+                <button class="close-btn" onclick="closeModal('quizModal')">&times;</button>
+            </div>
+            <form id="quizForm">
+                <div class="form-group">
+                    <label for="quizTitle">Quiz Title</label>
+                    <input type="text" id="quizTitle" placeholder="Enter quiz title" required>
+                </div>
+                <div class="form-group">
+                    <label for="quizCourse">Course</label>
+                    <select id="quizCourse" required>
+                        <option value="">Select course</option>
+                        <option value="web-dev">Full Stack Web Development</option>
+                        <option value="ml">Machine Learning Fundamentals</option>
+                        <option value="mobile">Mobile App Development</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="quizTimeLimit">Time Limit (minutes)</label>
+                    <input type="number" id="quizTimeLimit" placeholder="Enter time limit" required>
+                </div>
+                <div class="form-group">
+                    <label for="quizQuestions">Number of Questions</label>
+                    <input type="number" id="quizQuestions" placeholder="Enter number of questions" required>
+                </div>
+                <button type="submit" class="submit-btn">Create Quiz</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resource Upload Modal -->
+    <div class="modal" id="resourceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Upload Resource</h3>
+                <button class="close-btn" onclick="closeModal('resourceModal')">&times;</button>
+            </div>
+            <form id="resourceForm">
+                <div class="form-group">
+                    <label for="resourceTitle">Resource Title</label>
+                    <input type="text" id="resourceTitle" placeholder="Enter resource title" required>
+                </div>
+                <div class="form-group">
+                    <label for="resourceCourse">Course</label>
+                    <select id="resourceCourse" required>
+                        <option value="">Select course</option>
+                        <option value="web-dev">Full Stack Web Development</option>
+                        <option value="ml">Machine Learning Fundamentals</option>
+                        <option value="mobile">Mobile App Development</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Upload File</label>
+                    <div class="file-upload" onclick="document.getElementById('resourceFile').click()">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #00d1ff; margin-bottom: 0.5rem;"></i>
+                        <p>Click to upload or drag and drop</p>
+                        <p style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6);">PDF, Video, Images supported</p>
+                        <input type="file" id="resourceFile" accept=".pdf,.mp4,.jpg,.jpeg,.png" required>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">Upload Resource</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Grade Modal -->
+    <div class="modal" id="gradeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Grade Assignment</h3>
+                <button class="close-btn" onclick="closeModal('gradeModal')">&times;</button>
+            </div>
+            <form id="gradeForm">
+                <div class="form-group">
+                    <label for="studentName">Student</label>
+                    <select id="studentName" required>
+                        <option value="">Select student</option>
+                        <option value="john">John Student</option>
+                        <option value="sarah">Sarah Wilson</option>
+                        <option value="mike">Mike Johnson</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="assignmentName">Assignment</label>
+                    <select id="assignmentName" required>
+                        <option value="">Select assignment</option>
+                        <option value="react-project">React Component Project</option>
+                        <option value="ml-algorithm">ML Algorithm Implementation</option>
+                        <option value="mobile-ui">Mobile UI Design</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="gradeValue">Score (0-100)</label>
+                    <input type="number" id="gradeValue" min="0" max="100" placeholder="Enter score" required>
+                </div>
+                <div class="form-group">
+                    <label for="gradeFeedback">Feedback</label>
+                    <textarea id="gradeFeedback" rows="3" placeholder="Enter feedback for student"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Submit Grade</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        function checkAuth() {
+            console.log('[v0] Checking authentication...');
+            
+            const currentUser = localStorage.getItem('mihaCurrentUser') || sessionStorage.getItem('mihaCurrentUser');
+            console.log('[v0] Current user data:', currentUser);
+            
+            if (!currentUser) {
+                console.log('[v0] No user data found, redirecting to login');
+                window.location.href = 'login.html';
+                return null;
+            }
+            
+            let userData;
+            try {
+                userData = JSON.parse(currentUser);
+                console.log('[v0] Parsed user data:', userData);
+            } catch (error) {
+                console.log('[v0] Error parsing user data:', error);
+                localStorage.removeItem('mihaCurrentUser');
+                sessionStorage.removeItem('mihaCurrentUser');
+                window.location.href = 'login.html';
+                return null;
+            }
+            
+            if (userData.role !== 'teacher') {
+                console.log('[v0] User role mismatch. Expected: teacher, Got:', userData.role);
+                window.location.href = 'login.html';
+                return null;
+            }
+            
+            console.log('[v0] Authentication successful for teacher:', userData.name);
+            return userData;
+        }
+
+        // Initialize dashboard
+        function initDashboard() {
+            const user = checkAuth();
+            if (!user) return;
+
+            // Update user info
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('welcomeName').textContent = user.name.split(' ')[0];
+            document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('');
+
+            // Load dashboard data
+            loadCourses();
+            loadAssignments();
+            loadStudents();
+        }
+
+        // Sample data
+        const sampleCourses = [
+            {
+                id: 1,
+                title: 'Full Stack Web Development',
+                students: 45,
+                assignments: 8,
+                rating: 4.9
+            },
+            {
+                id: 2,
+                title: 'Machine Learning Fundamentals',
+                students: 32,
+                assignments: 6,
+                rating: 4.7
+            },
+            {
+                id: 3,
+                title: 'Mobile App Development',
+                students: 28,
+                assignments: 5,
+                rating: 4.8
+            },
+            {
+                id: 4,
+                title: 'Data Science with Python',
+                students: 22,
+                assignments: 4,
+                rating: 4.6
+            }
+        ];
+
+        const sampleAssignments = [
+            {
+                id: 1,
+                title: 'React Component Project',
+                course: 'Full Stack Web Development',
+                dueDate: '2024-01-15',
+                submissions: 38,
+                total: 45
+            },
+            {
+                id: 2,
+                title: 'ML Algorithm Implementation',
+                course: 'Machine Learning Fundamentals',
+                dueDate: '2024-01-12',
+                submissions: 30,
+                total: 32
+            },
+            {
+                id: 3,
+                title: 'Mobile UI Design',
+                course: 'Mobile App Development',
+                dueDate: '2024-01-18',
+                submissions: 15,
+                total: 28
+            }
+        ];
+
+        const sampleStudents = [
+            { name: 'John Student', course: 'Web Development', progress: 85 },
+            { name: 'Sarah Wilson', course: 'Machine Learning', progress: 72 },
+            { name: 'Mike Johnson', course: 'Mobile Development', progress: 91 },
+            { name: 'Emily Davis', course: 'Data Science', progress: 68 },
+            { name: 'Alex Brown', course: 'Web Development', progress: 79 }
+        ];
+
+        // Load courses
+        function loadCourses() {
+            const coursesList = document.getElementById('coursesList');
+            coursesList.innerHTML = '';
+
+            const courses = JSON.parse(localStorage.getItem('mihaCourses') || '[]');
+            courses.forEach(course => {
+                const courseItem = document.createElement('div');
+                courseItem.className = 'course-item';
+                courseItem.innerHTML = `
+                    <div class="course-header">
+                        <div class="course-info">
+                            <h4>${course.title}</h4>
+                            <div class="course-meta">
+                                <span><i class="fas fa-users"></i> ${course.students} students</span>
+                                <span><i class="fas fa-tasks"></i> ${course.assignments} assignments</span>
+                                <span><i class="fas fa-star"></i> ${course.rating}</span>
+                            </div>
+                        </div>
+                        <div class="course-actions">
+                            <button class="action-btn edit" title="Edit Course">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn delete" title="Delete Course">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                coursesList.appendChild(courseItem);
+            });
+        }
+
+        // Load assignments
+        function loadAssignments() {
+            const assignmentsList = document.getElementById('assignmentsList');
+            assignmentsList.innerHTML = '';
+
+            const assignments = JSON.parse(localStorage.getItem('mihaAssignments') || '[]');
+            assignments.forEach(assignment => {
+                const assignmentItem = document.createElement('div');
+                assignmentItem.className = 'assignment-item';
+                assignmentItem.innerHTML = `
+                    <div class="assignment-info">
+                        <h4>${assignment.title}</h4>
+                        <p>${assignment.course} • Due: ${new Date(assignment.dueDate).toLocaleDateString()}</p>
+                    </div>
+                    <div class="assignment-stats">
+                        <div class="submissions-count">${assignment.submissions}/${assignment.total}</div>
+                        <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.7);">submissions</div>
+                    </div>
+                `;
+                assignmentsList.appendChild(assignmentItem);
+            });
+        }
+
+        // Load students
+        function loadStudents() {
+            const studentsList = document.getElementById('studentsList');
+            studentsList.innerHTML = '';
+
+            // Try to get students from localStorage, fall back to sample data
+            let students = JSON.parse(localStorage.getItem('mihaStudents') || '[]');
+            
+            // If no students in localStorage, use sample data
+            if (students.length === 0) {
+                students = [
+                    { name: 'Alice Johnson', course: 'Web Development', progress: 85 },
+                    { name: 'Bob Smith', course: 'Data Science', progress: 72 },
+                    { name: 'Carol Davis', course: 'Mobile Development', progress: 91 },
+                    { name: 'David Wilson', course: 'UI/UX Design', progress: 68 }
+                ];
+            }
+
+            students.forEach(student => {
+                const studentItem = document.createElement('div');
+                studentItem.className = 'student-item';
+                studentItem.innerHTML = `
+                    <div class="student-info">
+                        <div class="student-avatar">${student.name.split(' ').map(n => n[0]).join('')}</div>
+                        <div class="student-details">
+                            <h4>${student.name}</h4>
+                            <p>${student.course}</p>
+                        </div>
+                    </div>
+                    <div class="student-progress">
+                        <div class="progress-text">${student.progress}%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${student.progress}%"></div>
+                        </div>
+                    </div>
+                `;
+                studentsList.appendChild(studentItem);
+            });
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Form submissions
+        document.getElementById('courseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const courseData = {
+                id: Date.now(),
+                title: formData.get('courseTitle'),
+                description: formData.get('courseDescription'),
+                category: formData.get('courseCategory'),
+                duration: formData.get('courseDuration'),
+                students: 0, // Default value for new courses
+                assignments: 0, // Default value for new courses
+                rating: '5.0', // Default rating for new courses
+                createdAt: new Date().toISOString(),
+                instructor: JSON.parse(localStorage.getItem('mihaCurrentUser')).name
+            };
+            
+            // Save to localStorage
+            let courses = JSON.parse(localStorage.getItem('mihaCourses') || '[]');
+            courses.push(courseData);
+            localStorage.setItem('mihaCourses', JSON.stringify(courses));
+            
+            alert('Course created successfully!');
+            closeModal('courseModal');
+            this.reset();
+            loadCourses(); // Refresh the courses list
+        });
+
+        document.getElementById('assignmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const assignmentData = {
+                id: Date.now(),
+                title: formData.get('assignmentTitle'),
+                description: formData.get('assignmentDescription'),
+                course: formData.get('assignmentCourse'),
+                dueDate: formData.get('assignmentDueDate'),
+                points: formData.get('assignmentPoints'),
+                submissions: 0, // Default submissions count
+                total: 25, // Default total students (can be updated later)
+                createdAt: new Date().toISOString(),
+                instructor: JSON.parse(localStorage.getItem('mihaCurrentUser')).name
+            };
+            
+            // Save to localStorage
+            let assignments = JSON.parse(localStorage.getItem('mihaAssignments') || '[]');
+            assignments.push(assignmentData);
+            localStorage.setItem('mihaAssignments', JSON.stringify(assignments));
+            
+            alert('Assignment created successfully!');
+            closeModal('assignmentModal');
+            this.reset();
+            loadAssignments(); // Refresh the assignments list
+        });
+
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const quizData = {
+                id: Date.now(),
+                title: formData.get('quizTitle'),
+                description: formData.get('quizDescription'),
+                course: formData.get('quizCourse'),
+                timeLimit: formData.get('quizTimeLimit'),
+                questions: formData.get('quizQuestions'),
+                createdAt: new Date().toISOString(),
+                instructor: JSON.parse(localStorage.getItem('mihaCurrentUser')).name
+            };
+            
+            // Save to localStorage
+            let quizzes = JSON.parse(localStorage.getItem('mihaQuizzes') || '[]');
+            quizzes.push(quizData);
+            localStorage.setItem('mihaQuizzes', JSON.stringify(quizzes));
+            
+            alert('Quiz created successfully!');
+            closeModal('quizModal');
+            this.reset();
+            loadQuizzes(); // Refresh the quizzes list
+        });
+
+        document.getElementById('resourceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const resourceData = {
+                id: Date.now(),
+                title: formData.get('resourceTitle'),
+                description: formData.get('resourceDescription'),
+                course: formData.get('resourceCourse'),
+                type: formData.get('resourceType'),
+                file: formData.get('resourceFile')?.name || 'No file selected',
+                createdAt: new Date().toISOString(),
+                instructor: JSON.parse(localStorage.getItem('mihaCurrentUser')).name
+            };
+            
+            // Save to localStorage
+            let resources = JSON.parse(localStorage.getItem('mihaResources') || '[]');
+            resources.push(resourceData);
+            localStorage.setItem('mihaResources', JSON.stringify(resources));
+            
+            alert('Resource uploaded successfully!');
+            closeModal('resourceModal');
+            this.reset();
+            loadResources(); // Refresh the resources list
+        });
+
+        document.getElementById('gradeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const gradeData = {
+                id: Date.now(),
+                student: formData.get('studentName'),
+                assignment: formData.get('assignmentName'),
+                grade: formData.get('gradeValue'),
+                feedback: formData.get('gradeFeedback'),
+                createdAt: new Date().toISOString(),
+                instructor: JSON.parse(localStorage.getItem('mihaCurrentUser')).name
+            };
+            
+            // Save to localStorage
+            let grades = JSON.parse(localStorage.getItem('mihaGrades') || '[]');
+            grades.push(gradeData);
+            localStorage.setItem('mihaGrades', JSON.stringify(grades));
+            
+            alert('Grade submitted successfully!');
+            closeModal('gradeModal');
+            this.reset();
+            loadGrades(); // Refresh the grades list
+        });
+
+        // Load quizzes
+        function loadQuizzes() {
+            // Placeholder function for loading quizzes
+        }
+
+        // Load resources
+        function loadResources() {
+            // Placeholder function for loading resources
+        }
+
+        // Load grades
+        function loadGrades() {
+            // Placeholder function for loading grades
+        }
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('mihaCurrentUser');
+            sessionStorage.removeItem('mihaCurrentUser');
+            window.location.href = 'login.html';
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // Initialize dashboard on load
+        window.addEventListener('load', initDashboard);
+
+        // Add fade-in animation
+        window.addEventListener('load', function() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.opacity = '1';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>
